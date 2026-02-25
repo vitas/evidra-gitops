@@ -1,7 +1,7 @@
 # Configuration Modes
 
 This page lists required environment variables and configuration properties for supported setup modes.
-With the introduction of Viper, all `EVIDRA_*` environment variables can now also be supplied via a `config.yaml` file placed in the working directory or `/etc/evidra/config.yaml`.
+With the introduction of Viper, all `EVIDRA_*` environment variables can now also be supplied via a `config.yaml` file placed in the working directory or `/etc/evidra-gitops/config.yaml`.
 
 ## Mode 1: Local Docker Compose (default)
 
@@ -42,7 +42,7 @@ Required:
   - `EVIDRA_DB_PASSWORD`
   - `EVIDRA_READ_TOKEN`
   - `EVIDRA_ARGO_API_TOKEN` (collector enabled by default)
-- Production split DB settings via `Secret/evidra-secrets`
+- Production split DB settings via `Secret/evidra-gitops-secrets`
 
 Required (one JWT verifier source if direct JWT mode is used):
 - `EVIDRA_AUTH_JWT_HS256_SECRET`
@@ -51,7 +51,7 @@ Required (one JWT verifier source if direct JWT mode is used):
 
 Recommended hardening:
 - `EVIDRA_AUTH_RATE_LIMIT_ENABLED=true`
-- `EVIDRA_AUTH_AUDIT_LOG_FILE=/var/log/evidra-auth.log`
+- `EVIDRA_AUTH_AUDIT_LOG_FILE=/var/log/evidra-gitops-auth.log`
 - `EVIDRA_DB_SSLMODE=verify-full`
 
 ## Validation Checklist

@@ -16,7 +16,7 @@ labels:
       app.kubernetes.io/environment: trial
 
 secretGenerator:
-  - name: evidra-secrets
+  - name: evidra-gitops-secrets
     envs:
       - secrets.env
 
@@ -26,23 +26,23 @@ generatorOptions:
 patches:
   - target:
       kind: Deployment
-      name: evidra
+      name: evidra-gitops
     patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
       - op: add
         path: /spec/template/spec/serviceAccountName
-        value: evidra
+        value: evidra-gitops
       - op: replace
         path: /spec/template/spec/volumes/0
         value:
-          name: evidra-data
+          name: evidra-gitops-data
           persistentVolumeClaim:
-            claimName: evidra-data
+            claimName: evidra-gitops-data
   - target:
       kind: ConfigMap
-      name: evidra-config
+      name: evidra-gitops-config
     patch: |-
       - op: replace
         path: /data/EVIDRA_ARGO_COLLECTOR_ENABLED
@@ -52,6 +52,6 @@ patches:
         value: "require"
 
 images:
-  - name: evidra
-    newName: evidra
+  - name: evidra-gitops
+    newName: evidra-gitops
     newTag: trial

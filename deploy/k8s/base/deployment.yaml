@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: evidra
+  name: evidra-gitops
   labels:
-    app.kubernetes.io/name: evidra
+    app.kubernetes.io/name: evidra-gitops
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: evidra
+      app.kubernetes.io/name: evidra-gitops
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: evidra
+        app.kubernetes.io/name: evidra-gitops
     spec:
       securityContext:
         runAsNonRoot: true
@@ -22,8 +22,8 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: evidra
-          image: evidra:local
+        - name: evidra-gitops
+          image: evidra-gitops:local
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -37,12 +37,12 @@ spec:
               memory: 512Mi
           envFrom:
             - configMapRef:
-                name: evidra-config
+                name: evidra-gitops-config
             - secretRef:
-                name: evidra-secrets
+                name: evidra-gitops-secrets
           volumeMounts:
-            - name: evidra-data
-              mountPath: /var/evidra
+            - name: evidra-gitops-data
+              mountPath: /var/evidra-gitops
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -56,5 +56,5 @@ spec:
             initialDelaySeconds: 3
             periodSeconds: 5
       volumes:
-        - name: evidra-data
+        - name: evidra-gitops-data
           emptyDir: {}

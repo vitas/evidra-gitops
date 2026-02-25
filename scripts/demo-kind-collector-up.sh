@@ -29,13 +29,13 @@ EVIDRA_ARGO_COLLECTOR_ENABLED=true \
 EVIDRA_ARGO_API_URL="${EVIDRA_ARGO_API_URL}" \
 EVIDRA_ARGO_API_TOKEN="${api_token}" \
 EVIDRA_ARGO_COLLECTOR_INTERVAL="5s" \
-EVIDRA_ARGO_CHECKPOINT_FILE="/tmp/evidra-argo-checkpoint.json" \
+EVIDRA_ARGO_CHECKPOINT_FILE="/tmp/evidra-gitops-argo-checkpoint.json" \
 EVIDRA_DEV_INSECURE=true \
-  docker compose up -d --build postgres evidra >/dev/null
+  docker compose up -d --build postgres evidra-gitops >/dev/null
 
 for _ in $(seq 1 30); do
   if curl -fsS "http://localhost:8080/healthz" >/dev/null 2>&1; then
-    pass "Evidra restarted with Argo collector enabled"
+    pass "Evidra-GitOps restarted with Argo collector enabled"
     echo "ARGO_BASE_URL=${ARGO_BASE_URL}"
     echo "EVIDRA_ARGO_API_URL=${EVIDRA_ARGO_API_URL}"
     exit 0
@@ -43,4 +43,4 @@ for _ in $(seq 1 30); do
   sleep 1
 done
 
-fail "Evidra did not become healthy after collector configuration"
+fail "Evidra-GitOps did not become healthy after collector configuration"

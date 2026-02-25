@@ -1,6 +1,6 @@
 # Architecture v1
 
-Evidra v1 is an Argo CD-first investigation and evidence layer. It derives lifecycle evidence from Argo CD operation history, revision metadata, and sync/health transitions, stores immutable records, and serves timeline/export APIs. The unified data model leverages the CNCF CloudEvents framework native integration.
+Evidra-GitOps v1 is an Argo CD-first investigation and evidence layer. It derives lifecycle evidence from Argo CD operation history, revision metadata, and sync/health transitions, stores immutable records, and serves timeline/export APIs. The unified data model leverages the CNCF CloudEvents framework native integration.
 
 ## Scope
 - Primary source: Argo CD operation/history and revision metadata.
@@ -25,7 +25,7 @@ Argo CD API/events -> Argo collector -> normalize/correlate -> append-only store
 
 ## Observability
 
-Evidra uses OpenTelemetry as its single observability stack. All telemetry (traces, metrics, structured logs) flows through the OTel SDK.
+Evidra-GitOps uses OpenTelemetry as its single observability stack. All telemetry (traces, metrics, structured logs) flows through the OTel SDK.
 
 ### Architecture
 

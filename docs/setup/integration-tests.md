@@ -5,7 +5,7 @@ Integration tests are isolated behind a build tag.
 ## Scope
 
 - Postgres container via `testcontainers-go`
-- Evidra API in-process
+- Evidra-GitOps API in-process
 - Legacy provider payload replay (compatibility tests retained for future extension)
 - Timeline/correlation/export assertions
 

@@ -2,18 +2,18 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: evidra
-      POSTGRES_USER: evidra
-      POSTGRES_PASSWORD: evidra
+      POSTGRES_DB: evidra_gitops
+      POSTGRES_USER: evidra_gitops
+      POSTGRES_PASSWORD: evidra_gitops
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U evidra -d evidra"]
+      test: ["CMD-SHELL", "pg_isready -U evidra_gitops -d evidra_gitops"]
       interval: 5s
       timeout: 3s
       retries: 20
 
-  evidra:
+  evidra-gitops:
     build:
       context: .
       dockerfile: Dockerfile
@@ -22,16 +22,16 @@ services:
         condition: service_healthy
     environment:
       EVIDRA_ADDR: ":8080"
-      EVIDRA_EXPORT_DIR: "/tmp/evidra-exports"
+      EVIDRA_EXPORT_DIR: "/tmp/evidra-gitops-exports"
       EVIDRA_DB_DRIVER: "pgx"
       EVIDRA_DB_DIALECT: "postgres"
-      EVIDRA_DB_DSN: "postgres://evidra:evidra@postgres:5432/evidra?sslmode=disable"
+      EVIDRA_DB_DSN: "postgres://evidra_gitops:evidra_gitops@postgres:5432/evidra_gitops?sslmode=disable"
       EVIDRA_DB_MIGRATE: "true"
       EVIDRA_ARGO_COLLECTOR_ENABLED: "${EVIDRA_ARGO_COLLECTOR_ENABLED:-false}"
       EVIDRA_ARGO_COLLECTOR_INTERVAL: "${EVIDRA_ARGO_COLLECTOR_INTERVAL:-30s}"
       EVIDRA_ARGO_API_URL: "${EVIDRA_ARGO_API_URL:-}"
       EVIDRA_ARGO_API_TOKEN: "${EVIDRA_ARGO_API_TOKEN:-}"
-      EVIDRA_ARGO_CHECKPOINT_FILE: "/tmp/evidra-argo-checkpoint.json"
+      EVIDRA_ARGO_CHECKPOINT_FILE: "/tmp/evidra-gitops-argo-checkpoint.json"
       EVIDRA_DEV_INSECURE: "${EVIDRA_DEV_INSECURE:-true}"
     ports:
       - "8080:8080"

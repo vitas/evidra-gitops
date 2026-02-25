@@ -7,8 +7,8 @@ export default defineConfig({
     lib: {
       entry: "src/argocd-extension.js",
       formats: ["iife"],
-      name: "EvidraArgoExtension",
-      fileName: () => "evidra-argocd-extension.js",
+      name: "EvidraGitOpsArgoExtension",
+      fileName: () => "evidra-gitops-argocd-extension.js",
     },
     rollupOptions: {
       external: ["react", "react-dom"],

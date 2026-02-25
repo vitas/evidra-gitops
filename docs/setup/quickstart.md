@@ -2,7 +2,7 @@
 
 ## Demo modes
 
-- `make evidra-demo`: start interactive sandbox (kind + Gitea + Argo CD + Evidra).
+- `make evidra-demo`: start interactive sandbox (kind + Gitea + Argo CD + Evidra-GitOps).
 - `make evidra-demo-test`: run deterministic case suite against running sandbox.
 - `make evidra-demo-all`: run sandbox setup and case suite in one command.
 - `make evidra-demo-clean`: stop and remove demo resources.
@@ -12,7 +12,7 @@
 | Tool | Required for | Mandatory |
 | ---- | ------------ | --------- |
 | make | demo commands | yes |
-| Docker | local Evidra runtime | yes |
+| Docker | local Evidra-GitOps runtime | yes |
 | kind | in-cluster sandbox | yes |
 | kubectl | cluster operations | yes |
 | git | case suite commit flow | yes |
@@ -27,13 +27,13 @@ make evidra-demo
 
 After startup:
 - Argo CD UI: `https://localhost:8081`
-- Evidra UI: `http://localhost:8080/ui/`
+- Evidra-GitOps UI: `http://localhost:8080/ui/`
 - Port-forward helper: `bash scripts/argocd-port-forward.sh start`
 
 The sandbox stays running for manual exploration:
 - commit directly to in-cluster Gitea repo
 - sync from Argo CD
-- inspect resulting Changes in Evidra
+- inspect resulting Changes in Evidra-GitOps
 
 ## Structured case suite
 
@@ -47,7 +47,7 @@ The suite validates:
 - Case01: successful deploy
 - Case02: correlated deploy (`CHG777000`, `OPS-900`)
 - Case03: controlled failed/degraded deploy
-- Final: Evidra reports 3+ Changes with failed/degraded and correlated entries
+- Final: Evidra-GitOps reports 3+ Changes with failed/degraded and correlated entries
 
 ## One-command run
 

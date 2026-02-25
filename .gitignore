@@ -23,8 +23,8 @@ ui/playwright-report/
 ui/test-results/
 
 # Compiled binaries
-evidra
-evidra.exe
+evidra-gitops
+evidra-gitops.exe
 
 # Python cache
 __pycache__/

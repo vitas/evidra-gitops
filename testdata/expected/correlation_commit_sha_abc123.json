@@ -30,13 +30,17 @@
             "summary": "approved",
             "timestamp": "2026-02-16T11:50:00Z"
           }
-        ]
+        ],
+        "argocd_app": "payments-api",
+        "phase": "Succeeded",
+        "result": "Succeeded"
       },
       "extensions": {
         "approval_reference": "APR-7",
         "cluster": "eu-1",
         "commit_sha": "abc123",
         "external_change_id": "CHG123456",
+        "health_status": "healthy",
         "initiator": "argocd-application-controller",
         "namespace": "prod-eu",
         "operation_id": "op-1",

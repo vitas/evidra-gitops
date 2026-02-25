@@ -2,8 +2,8 @@ import { expect, test, type Frame, type Locator, type Page } from "@playwright/t
 
 const username = process.env.ARGO_USERNAME || "admin";
 const password = process.env.ARGO_PASSWORD || "";
-const tabName = process.env.EVIDRA_TAB_NAME || "Evidra";
-const extensionPath = process.env.EVIDRA_EXTENSION_PATH || "/evidra-evidence";
+const tabName = process.env.EVIDRA_TAB_NAME || "Evidra-GitOps";
+const extensionPath = process.env.EVIDRA_EXTENSION_PATH || "/evidra-gitops-evidence";
 const standaloneURL = process.env.EVIDRA_STANDALONE_URL || "http://localhost:8080/ui/";
 let useStandalone = false;
 
@@ -250,10 +250,10 @@ async function openExplorer(page: Page): Promise<Locator> {
       }
     }
 
-    const frameHost = page.locator('iframe[title="Evidra Evidence Explorer"]');
+    const frameHost = page.locator('iframe[title="Evidra-GitOps Evidence Explorer"]');
     if ((await frameHost.count()) > 0) {
       await expect(frameHost).toBeVisible({ timeout: 30_000 });
-      const frame = page.frameLocator('iframe[title="Evidra Evidence Explorer"]');
+      const frame = page.frameLocator('iframe[title="Evidra-GitOps Evidence Explorer"]');
       await expect(frame.getByTestId("filters-panel")).toBeVisible();
       return frame.locator(":root");
     }
@@ -263,7 +263,7 @@ async function openExplorer(page: Page): Promise<Locator> {
     useStandalone = true;
     return openStandalone(page);
   }
-  throw new Error("Evidra iframe not found");
+  throw new Error("Evidra-GitOps iframe not found");
 }
 
 async function waitForSubjectReady(frame: Locator): Promise<void> {
@@ -297,7 +297,7 @@ async function waitForExplorerFrame(page: Page): Promise<Frame> {
   if (useStandalone) {
     return page.mainFrame();
   }
-  const iframe = page.locator('iframe[title="Evidra Evidence Explorer"]');
+  const iframe = page.locator('iframe[title="Evidra-GitOps Evidence Explorer"]');
   await expect(iframe).toBeVisible({ timeout: 30_000 });
   const handle = await iframe.elementHandle();
   if (!handle) {

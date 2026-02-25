@@ -21,7 +21,7 @@ var apiTracer = otel.Tracer("evidra/api")
 func (s *Server) handleHealth(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]interface{}{
 		"status":  "ok",
-		"service": "evidra",
+		"service": "evidra-gitops",
 		"time":    time.Now().UTC().Format(time.RFC3339),
 	})
 }

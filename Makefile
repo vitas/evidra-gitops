@@ -36,10 +36,10 @@ evidra-ui-e2e-down:
 trial-apply:
 	bash scripts/ensure-k8s-secrets-env.sh --overlay trial --demo
 	kubectl apply -k deploy/k8s/overlays/trial
-	EVIDRA_SECRET_NAME=evidra-secrets-trial bash scripts/ensure-k8s-secrets-env.sh --overlay trial --validate-secret
+	EVIDRA_SECRET_NAME=evidra-gitops-secrets-trial bash scripts/ensure-k8s-secrets-env.sh --overlay trial --validate-secret
 
 trial-port-forward:
-	kubectl -n evidra port-forward svc/evidra-trial 18080:80
+	kubectl -n evidra-gitops port-forward svc/evidra-gitops-trial 18080:80
 
 trial-smoke:
 	bash scripts/smoke-k8s-trial.sh

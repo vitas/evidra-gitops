@@ -98,7 +98,7 @@ func buildResource(cfg config.OTelConfig) (*resource.Resource, error) {
 	if cfg.ServiceVersion != "" {
 		attrs = append(attrs, resource.WithAttributes(semconv.ServiceVersion(cfg.ServiceVersion)))
 	}
-	return resource.Merge(resource.Default(), resource.NewWithAttributes(semconv.SchemaURL, semconv.ServiceName(serviceName)))
+	return resource.Merge(resource.Default(), resource.NewSchemaless(semconv.ServiceName(serviceName)))
 }
 
 func buildTracerProvider(ctx context.Context, cfg config.OTelConfig, res *resource.Resource) (*sdktrace.TracerProvider, error) {

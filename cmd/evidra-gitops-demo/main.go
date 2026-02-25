@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "usage: evidra-demo <seed-commit>")
+		fmt.Fprintln(os.Stderr, "usage: evidra-gitops-demo <seed-commit>")
 		os.Exit(2)
 	}
 

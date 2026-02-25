@@ -11,7 +11,7 @@ labels:
       app.kubernetes.io/environment: prod
 
 secretGenerator:
-  - name: evidra-secrets
+  - name: evidra-gitops-secrets
     envs:
       - secrets.env
 
@@ -21,14 +21,14 @@ generatorOptions:
 patches:
   - target:
       kind: Deployment
-      name: evidra
+      name: evidra-gitops
     patch: |-
       - op: replace
         path: /spec/replicas
         value: 3
   - target:
       kind: ConfigMap
-      name: evidra-config
+      name: evidra-gitops-config
     patch: |-
       - op: replace
         path: /data/EVIDRA_ARGO_COLLECTOR_ENABLED
@@ -53,6 +53,6 @@ patches:
         value: "240"
 
 images:
-  - name: evidra
-    newName: evidra
+  - name: evidra-gitops
+    newName: evidra-gitops
     newTag: prod

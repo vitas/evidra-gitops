@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OVERLAY="${EVIDRA_OVERLAY:-trial}"
 MODE="strict"
-NAMESPACE="${EVIDRA_NAMESPACE:-evidra}"
-SECRET_NAME="${EVIDRA_SECRET_NAME:-evidra-secrets}"
+NAMESPACE="${EVIDRA_NAMESPACE:-evidra-gitops}"
+SECRET_NAME="${EVIDRA_SECRET_NAME:-evidra-gitops-secrets}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

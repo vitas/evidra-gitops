@@ -4,7 +4,7 @@ This file maps investigation use cases to automated Playwright coverage.
 
 | Use case ID | User intent | Expected outcome | Automated test |
 | --- | --- | --- | --- |
-| `UC-001` | Open the Evidra extension and investigate recent production changes | Changes list loads, a Change can be selected, timeline and payload are visible | `ui/e2e/evidra.spec.ts` → `UC-001 S1 happy path: list changes and open one` |
+| `UC-001` | Open the Evidra-GitOps extension and investigate recent production changes | Changes list loads, a Change can be selected, timeline and payload are visible | `ui/e2e/evidra.spec.ts` → `UC-001 S1 happy path: list changes and open one` |
 | `UC-002` | Find a Change by enterprise correlation reference | Search filters results and selected Change shows matching metadata | `ui/e2e/evidra.spec.ts` → `UC-002 S2 search by correlation key` |
 | `UC-003` | Understand a no-match query result | UI shows explicit no-results state and does not remain in loading state | `ui/e2e/evidra.spec.ts` → `UC-003 S3 empty-state clarity` |
 | `UC-004` | Produce evidence export from selected Change | Export transitions to completed state and download action is available | `ui/e2e/evidra.spec.ts` → `UC-004 S4 export evidence` |

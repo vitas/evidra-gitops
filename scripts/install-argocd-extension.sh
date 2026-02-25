@@ -8,8 +8,8 @@ EVIDRA_EXTENSION_BASE_URL="${EVIDRA_EXTENSION_BASE_URL:-http://localhost:8080}"
 EVIDRA_EXTENSION_API_BASE_URL="${EVIDRA_EXTENSION_API_BASE_URL:-${EVIDRA_EXTENSION_BASE_URL}}"
 EVIDRA_EXTENSION_AUTH_MODE="${EVIDRA_EXTENSION_AUTH_MODE:-none}"
 EVIDRA_EXTENSION_AUTH_TOKEN="${EVIDRA_EXTENSION_AUTH_TOKEN:-}"
-EVIDRA_EXTENSION_TITLE="${EVIDRA_EXTENSION_TITLE:-Evidra}"
-EVIDRA_EXTENSION_PATH="${EVIDRA_EXTENSION_PATH:-/evidra-evidence}"
+EVIDRA_EXTENSION_TITLE="${EVIDRA_EXTENSION_TITLE:-Evidra-GitOps}"
+EVIDRA_EXTENSION_PATH="${EVIDRA_EXTENSION_PATH:-/evidra-gitops-evidence}"
 EVIDRA_EXTENSION_ICON="${EVIDRA_EXTENSION_ICON:-fa fa-file-alt}"
 
 pass() { echo "PASS: $1"; }
@@ -31,7 +31,7 @@ js_quote() {
   printf "'%s'" "$s"
 }
 
-cat > "${ROOT_DIR}/tmp/argocd/extensions/evidra/extension-config.js" <<EOF
+cat > "${ROOT_DIR}/tmp/argocd/extensions/evidra-gitops/extension-config.js" <<EOF
 window.__EVIDRA_EXTENSION_CONFIG__ = {
   evidraBaseURL: $(js_quote "${EVIDRA_EXTENSION_BASE_URL}"),
   apiBaseURL: $(js_quote "${EVIDRA_EXTENSION_API_BASE_URL}"),
@@ -43,9 +43,9 @@ window.__EVIDRA_EXTENSION_CONFIG__ = {
 };
 EOF
 
-kubectl -n "${ARGOCD_NS}" create configmap evidra-extension \
-  --from-file=config.js="${ROOT_DIR}/tmp/argocd/extensions/evidra/extension-config.js" \
-  --from-file=extension.js="${ROOT_DIR}/tmp/argocd/extensions/evidra/extension-evidra.js" \
+kubectl -n "${ARGOCD_NS}" create configmap evidra-gitops-extension \
+  --from-file=config.js="${ROOT_DIR}/tmp/argocd/extensions/evidra-gitops/extension-config.js" \
+  --from-file=extension.js="${ROOT_DIR}/tmp/argocd/extensions/evidra-gitops/extension-evidra-gitops.js" \
   --dry-run=client -o yaml | kubectl apply --server-side=true -f - >/dev/null
 pass "extension configmap applied"
 
@@ -56,8 +56,8 @@ kubectl -n "${ARGOCD_NS}" patch deployment argocd-server --type strategic -p '
       "spec": {
         "volumes": [
           {
-            "name": "evidra-extension",
-            "configMap": { "name": "evidra-extension" }
+            "name": "evidra-gitops-extension",
+            "configMap": { "name": "evidra-gitops-extension" }
           }
         ],
         "containers": [
@@ -65,8 +65,8 @@ kubectl -n "${ARGOCD_NS}" patch deployment argocd-server --type strategic -p '
             "name": "argocd-server",
             "volumeMounts": [
               {
-                "name": "evidra-extension",
-                "mountPath": "/tmp/extensions/evidra"
+                "name": "evidra-gitops-extension",
+                "mountPath": "/tmp/extensions/evidra-gitops"
               }
             ]
           }

@@ -53,23 +53,23 @@ pass "argo cd demo repository and application are configured"
 repo_local_url="http://127.0.0.1:13000/${admin_user}/demo-app.git"
 gitea_pf_pid=""
 if ! curl -fsS http://127.0.0.1:13000/ >/dev/null 2>&1; then
-  kubectl -n "${GITEA_NS}" port-forward svc/gitea-http 13000:3000 >/tmp/evidra_demo_gitea_pf.log 2>&1 &
+  kubectl -n "${GITEA_NS}" port-forward svc/gitea-http 13000:3000 >/tmp/evidra_gitops_demo_gitea_pf.log 2>&1 &
   gitea_pf_pid=$!
   trap '[[ -n "${gitea_pf_pid}" ]] && kill "${gitea_pf_pid}" >/dev/null 2>&1 || true' EXIT
   sleep 2
 fi
 
-repo_status="$(curl -sS -o /tmp/evidra_demo_repo_check.json -w '%{http_code}' -u "${admin_user}:${admin_password}" "http://127.0.0.1:13000/api/v1/repos/${admin_user}/demo-app")"
+repo_status="$(curl -sS -o /tmp/evidra_gitops_demo_repo_check.json -w '%{http_code}' -u "${admin_user}:${admin_password}" "http://127.0.0.1:13000/api/v1/repos/${admin_user}/demo-app")"
 if [[ "${repo_status}" == "404" ]]; then
   create_payload="$(jq -nc '{name:"demo-app",private:true,auto_init:false}')"
-  create_status="$(curl -sS -o /tmp/evidra_demo_repo_create.json -w '%{http_code}' -u "${admin_user}:${admin_password}" -H 'Content-Type: application/json' -d "${create_payload}" http://127.0.0.1:13000/api/v1/user/repos)"
+  create_status="$(curl -sS -o /tmp/evidra_gitops_demo_repo_create.json -w '%{http_code}' -u "${admin_user}:${admin_password}" -H 'Content-Type: application/json' -d "${create_payload}" http://127.0.0.1:13000/api/v1/user/repos)"
   [[ "${create_status}" == "201" ]] || fail "failed to create demo-app repository via Gitea API (status=${create_status})"
 elif [[ "${repo_status}" != "200" ]]; then
   fail "failed to query demo-app repository via Gitea API (status=${repo_status})"
 fi
 pass "demo repository is ready"
 
-go run ./cmd/evidra-demo seed-commit --repo-url "${repo_local_url}" --username "${admin_user}" --password "${admin_password}" --case A >/dev/null
+go run ./cmd/evidra-gitops-demo seed-commit --repo-url "${repo_local_url}" --username "${admin_user}" --password "${admin_password}" --case A >/dev/null
 if [[ -n "${gitea_pf_pid}" ]]; then
   kill "${gitea_pf_pid}" >/dev/null 2>&1 || true
   trap - EXIT

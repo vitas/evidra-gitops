@@ -2,7 +2,7 @@
 
 **Investigation & evidence layer for Argo CD.**
 
-Evidra explains **what happened during a deployment** and produces  
+Evidra-GitOps explains **what happened during a deployment** and produces
 **audit-ready evidence** from Argo CD history.
 
 It does **not** deploy, monitor, or alert.  
@@ -12,7 +12,7 @@ It helps you **understand, trace, and export** production changes.
 
 ## Core concept: Change
 
-**Change** is the primary investigation unit in Evidra.
+**Change** is the primary investigation unit in Evidra-GitOps.
 
 A Change represents a single Argo CD deployment operation with:
 
@@ -38,7 +38,7 @@ Change view includes investigation trust anchors:
 
 ## UI preview
 
-![Evidra Evidence Explorer](docs/images/evidra_ui_screenshot.png)
+![Evidra-GitOps Evidence Explorer](docs/images/evidra_ui_screenshot.png)
 
 ---
 
@@ -68,7 +68,7 @@ Change view includes investigation trust anchors:
 
 ## External change & ticket correlation
 
-Evidra can link deployments to enterprise change management using  
+Evidra-GitOps can link deployments to enterprise change management using
 Argo CD Application annotations:
 
 ```yaml
@@ -105,7 +105,7 @@ Key principles:
 
 ## Observability (OpenTelemetry)
 
-Evidra uses [OpenTelemetry](https://opentelemetry.io/) as its native observability stack for traces, metrics, and structured logging.
+Evidra-GitOps uses [OpenTelemetry](https://opentelemetry.io/) as its native observability stack for traces, metrics, and structured logging.
 
 ### Distributed tracing
 
@@ -146,7 +146,7 @@ All server logs use structured JSON via `go-logr/zapr` (zap backend). Audit auth
 
 ## Non-goals (v0.1)
 
-Evidra is not:
+Evidra-GitOps is not:
 
 - a CI/CD system
 - a monitoring or alerting tool
@@ -188,8 +188,8 @@ Expect rapid iteration based on real user feedback.
 ### Run local stack
 
 ```bash
-git clone https://github.com/vitas/evidra
-cd evidra
+git clone https://github.com/vitas/evidra-gitops
+cd evidra-gitops
 
 cp .env.example .env
 make evidra-demo

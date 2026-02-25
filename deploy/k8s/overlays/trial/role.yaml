@@ -1,9 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: evidra-events-reader
+  name: evidra-gitops-events-reader
   labels:
-    app.kubernetes.io/name: evidra
+    app.kubernetes.io/name: evidra-gitops
 rules:
   - apiGroups: [""]
     resources: ["events"]

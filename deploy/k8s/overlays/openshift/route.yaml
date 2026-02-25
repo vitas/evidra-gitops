@@ -1,13 +1,13 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: evidra
+  name: evidra-gitops
   labels:
-    app.kubernetes.io/name: evidra
+    app.kubernetes.io/name: evidra-gitops
 spec:
   to:
     kind: Service
-    name: evidra
+    name: evidra-gitops
   port:
     targetPort: http
   tls:

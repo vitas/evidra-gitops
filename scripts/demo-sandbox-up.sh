@@ -13,8 +13,8 @@ pass() { echo "PASS: $1"; }
 
 make evidra-ui-sync
 
-docker compose up -d --build postgres evidra
-pass "local Evidra API is up"
+docker compose up -d --build postgres evidra-gitops
+pass "local Evidra-GitOps API is up"
 
 bash scripts/demo-kind-argocd-up.sh
 bash scripts/demo-kind-collector-up.sh
@@ -42,7 +42,7 @@ echo "Demo environment is ready."
 echo
 echo "Gitea:  ${GITEA_URL}   (user: ${gitea_user:-<from-secret>} pass: ${gitea_password:-<from-secret>})"
 echo "ArgoCD: ${ARGO_URL}   (user: admin, pass: ${admin_pw:-<run: kubectl -n ${ARGOCD_NS} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d>})"
-echo "Evidra: ${EVIDRA_URL}"
+echo "Evidra-GitOps: ${EVIDRA_URL}"
 echo
 echo "Namespaces:"
 echo "- gitea: ${GITEA_NS}"
@@ -53,7 +53,7 @@ echo
 echo "Try it manually in 3 steps:"
 echo "1) Open Gitea (${GITEA_URL}) -> repo demo-app -> edit a value (for example ConfigMap) -> commit."
 echo "2) Open Argo CD (${ARGO_URL}) -> Applications -> ${APP_NAME} -> click Sync."
-echo "3) Open Evidra (${EVIDRA_URL}) -> select subject ${APP_NAME} -> click Find changes -> open a failed/degraded Change permalink."
+echo "3) Open Evidra-GitOps (${EVIDRA_URL}) -> select subject ${APP_NAME} -> click Find changes -> open a failed/degraded Change permalink."
 echo
 echo "Port-forwards:"
 echo "- Argo CD: bash scripts/argocd-port-forward.sh start"

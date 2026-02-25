@@ -1,20 +1,20 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: evidra
+  name: evidra-gitops
   labels:
-    app.kubernetes.io/name: evidra
+    app.kubernetes.io/name: evidra-gitops
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: evidra-trial.example.com
+    - host: evidra-gitops-trial.example.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: evidra
+                name: evidra-gitops
                 port:
                   name: http

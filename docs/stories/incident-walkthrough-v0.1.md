@@ -1,6 +1,6 @@
 # Incident Walkthrough: Degraded after Deploy (v0.1)
 
-This walkthrough demonstrates how to investigate a production degradation after a deployment using Evidra v0.1.
+This walkthrough demonstrates how to investigate a production degradation after a deployment using Evidra-GitOps v0.1.
 It is written as a practical exercise focused on safe conclusions and audit-ready output.
 
 ## 1) Situation
@@ -32,7 +32,7 @@ Answer the following:
 ## 3) Environment assumptions
 
 - Argo CD is managing the target application.
-- Evidra extension is installed and visible in Argo CD.
+- Evidra-GitOps extension is installed and visible in Argo CD.
 - Incident window is within the last 4 hours.
 - Application has correlation annotations, for example:
   - `evidra.rest/change-id: CHG-48219`
@@ -40,27 +40,27 @@ Answer the following:
 
 ## 4) Step-by-step walkthrough
 
-1. Open Argo CD -> Evidra Explorer.
-- Action: Sign in to Argo CD and open the `Evidra` tab.
-- Evidra shows: Explorer with filters, Changes list, and investigation panel.
+1. Open Argo CD -> Evidra-GitOps Explorer.
+- Action: Sign in to Argo CD and open the `Evidra-GitOps` tab.
+- Evidra-GitOps shows: Explorer with filters, Changes list, and investigation panel.
 - Safe conclusion: Investigation context is ready.
 - Not safe: No conclusions about cause yet.
 
 2. Narrow search by application and time range.
 - Action: Select subject/application for `payments-api`, set a recent time range, click `Find changes`.
-- Evidra shows: Filtered list of candidate Changes in the window.
+- Evidra-GitOps shows: Filtered list of candidate Changes in the window.
 - Safe conclusion: Candidate operations are constrained by scope and time.
 - Not safe: First visible Change is not automatically the incident trigger.
 
 3. Identify the relevant Change (deploy operation).
 - Action: Select the Change near incident start time.
-- Evidra shows: Selected Change Summary with status and timestamps.
+- Evidra-GitOps shows: Selected Change Summary with status and timestamps.
 - Safe conclusion: This is the operation selected for investigation.
 - Not safe: Temporal proximity alone does not prove causation.
 
 4. Open Change Summary and extract key facts.
 - Action: Read the summary block and copy fields if needed.
-- Evidra shows:
+- Evidra-GitOps shows:
   - `change_id`
   - revision/commit
   - cluster and namespace
@@ -72,7 +72,7 @@ Answer the following:
 
 5. Inspect the narrative timeline.
 - Action: Review ordered events around deploy and health transitions.
-- Evidra shows:
+- Evidra-GitOps shows:
   - deploy start and completion
   - health transitions
   - first degraded timestamp when available
@@ -81,25 +81,25 @@ Answer the following:
 
 6. Determine degradation-after-deploy status.
 - Action: Check the summary indicator for post-deploy degradation.
-- Evidra shows: `Degradation observed after deploy` (only when criteria match).
+- Evidra-GitOps shows: `Degradation observed after deploy` (only when criteria match).
 - Safe conclusion: Degradation was observed after deployment started.
-- Not safe: Evidra does not claim deploy caused degradation.
+- Not safe: Evidra-GitOps does not claim deploy caused degradation.
 
 7. Check for rollback or recovery Change.
 - Action: Search the same app/time window for subsequent rollback/recovery operations.
-- Evidra shows: Later Change entries and timeline outcomes.
+- Evidra-GitOps shows: Later Change entries and timeline outcomes.
 - Safe conclusion: You can confirm whether rollback/recovery occurred and when.
 - Not safe: Absence of a rollback Change does not mean no remediation happened outside Argo CD.
 
 8. Export evidence pack (JSON).
 - Action: Click export for the selected Change.
-- Evidra shows: Export artifact identifier or downloadable pack.
+- Evidra-GitOps shows: Export artifact identifier or downloadable pack.
 - Safe conclusion: Export captures deterministic investigation evidence for sharing.
 - Not safe: Export is not a full compliance workflow record by itself.
 
 9. Attach/share permalink and export in incident record.
 - Action: Copy Change permalink and attach export to incident ticket/postmortem.
-- Evidra shows: Stable Change link and exported evidence metadata.
+- Evidra-GitOps shows: Stable Change link and exported evidence metadata.
 - Safe conclusion: Reviewers can reopen the same investigation context consistently.
 - Not safe: Permalink alone is not immutable storage outside your retention policy.
 
@@ -172,7 +172,7 @@ make evidra-demo
 
 Open:
 - `http://localhost:8080/ui/`
- - `https://localhost:8081/` (Argo CD with Evidra extension, use printed admin password)
+ - `https://localhost:8081/` (Argo CD with Evidra-GitOps extension, use printed admin password)
 
 Run deterministic case suite:
 

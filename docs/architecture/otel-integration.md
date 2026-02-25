@@ -1,4 +1,4 @@
-# System Design: OpenTelemetry Integration for Evidra
+# System Design: OpenTelemetry Integration for Evidra-GitOps
 
 **Author:** System Architecture
 **Date:** 2026-02-24
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Evidra currently has minimal observability: two Prometheus HTTP metrics (`evidra_http_requests_total`, `evidra_http_request_duration_seconds`) and ad-hoc structured logging via `logr/zap`. There is no distributed tracing, no database-level instrumentation, no pipeline metrics, and no correlation between logs and traces.
+Evidra-GitOps currently has minimal observability: two Prometheus HTTP metrics (`evidra_http_requests_total`, `evidra_http_request_duration_seconds`) and ad-hoc structured logging via `logr/zap`. There is no distributed tracing, no database-level instrumentation, no pipeline metrics, and no correlation between logs and traces.
 
 This document proposes integrating OpenTelemetry (OTel) as the unified observability framework across all three signal types — **traces**, **metrics**, and **logs**. The existing Prometheus `client_golang` instrumentation (`internal/observability/httpmetrics.go`, `promhttp.Handler()`) will be **deleted entirely** and replaced by OTel equivalents. There is no migration period or dual-metric phase.
 
@@ -24,9 +24,9 @@ This document proposes integrating OpenTelemetry (OTel) as the unified observabi
 | Vendor lock-in | Prometheus format only | OTLP protocol → any backend (Jaeger, Grafana Tempo, Datadog, etc.) |
 | Ecosystem | Manual instrumentation only | Auto-instrumentation for `net/http`, `database/sql`, `pgx` |
 
-### Key Benefits for Evidra Specifically
+### Key Benefits for Evidra-GitOps Specifically
 
-1. **Investigation of Evidra itself.** Evidra's purpose is investigating production changes. The irony of having no observability into its own pipelines is a credibility gap. When Argo events stop appearing, operators need to know if the collector is failing, the normalizer is rejecting events, or the DB is slow.
+1. **Investigation of Evidra-GitOps itself.** Evidra-GitOps's purpose is investigating production changes. The irony of having no observability into its own pipelines is a credibility gap. When Argo events stop appearing, operators need to know if the collector is failing, the normalizer is rejecting events, or the DB is slow.
 
 2. **Ingest pipeline visibility.** The path from Argo CD watch event → normalize → integrity hash → store is completely opaque. Tracing reveals exactly where latency and errors occur.
 
@@ -58,7 +58,7 @@ cmd/evidra/main.go
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Evidra Process                       │
+│                     Evidra-GitOps Process                    │
 │                                                             │
 │  ┌──────────┐   ┌──────────┐   ┌──────────┐               │
 │  │  Traces   │   │  Metrics  │   │   Logs   │               │
@@ -88,14 +88,14 @@ The `/metrics` endpoint is now served by `go.opentelemetry.io/otel/exporters/pro
 ### 2.3 Deployment Topology
 
 **Option A — Direct export (simple deployments):**
-Evidra exports OTLP directly to the backend (Tempo, Jaeger, etc.) and exposes `/metrics` for Prometheus scraping.
+Evidra-GitOps exports OTLP directly to the backend (Tempo, Jaeger, etc.) and exposes `/metrics` for Prometheus scraping.
 
 **Option B — OTel Collector sidecar (production):**
-Evidra exports OTLP to a local OTel Collector, which handles sampling, batching, and routing to multiple backends. This is the recommended production topology.
+Evidra-GitOps exports OTLP to a local OTel Collector, which handles sampling, batching, and routing to multiple backends. This is the recommended production topology.
 
 ```
-Evidra Pod
-├── evidra (main container)
+Evidra-GitOps Pod
+├── evidra-gitops (main container)
 │   └── OTLP → localhost:4317
 └── otel-collector (sidecar)
     ├── receivers: otlp
@@ -107,7 +107,7 @@ Evidra Pod
 
 ## 3. Configuration
 
-All configuration via environment variables, consistent with existing Evidra conventions.
+All configuration via environment variables, consistent with existing Evidra-GitOps conventions.
 
 ```bash
 # --- Telemetry control ---
@@ -186,7 +186,7 @@ The following are removed entirely:
 | Direct imports of `prometheus/client_golang/prometheus/promauto` | No longer needed |
 | Direct imports of `prometheus/client_golang/prometheus/promhttp` | No longer needed |
 
-`prometheus/client_golang` remains as a transitive dependency (used internally by the OTel Prometheus exporter) but Evidra code no longer imports it directly.
+`prometheus/client_golang` remains as a transitive dependency (used internally by the OTel Prometheus exporter) but Evidra-GitOps code no longer imports it directly.
 
 ### 4.3 HTTP Middleware
 
@@ -267,7 +267,7 @@ var (
 
 ### 4.5 Ingest Pipeline Instrumentation
 
-The ingest pipeline is Evidra's most critical data path. Full tracing coverage:
+The ingest pipeline is Evidra-GitOps's most critical data path. Full tracing coverage:
 
 ```
 HTTP POST /v1/events
@@ -504,13 +504,13 @@ github.com/prometheus/client_golang/prometheus/promauto (direct import removed)
 github.com/prometheus/client_golang/prometheus/promhttp (direct import removed)
 ```
 
-`prometheus/client_golang` remains in `go.mod` as a transitive dependency of the OTel Prometheus exporter, but Evidra code no longer imports it.
+`prometheus/client_golang` remains in `go.mod` as a transitive dependency of the OTel Prometheus exporter, but Evidra-GitOps code no longer imports it.
 
 ---
 
 ## 7. Metric Naming Conventions
 
-All custom Evidra metrics follow these conventions:
+All custom Evidra-GitOps metrics follow these conventions:
 
 - **Namespace:** `evidra.` prefix for all custom metrics
 - **Subsystem:** component name (`ingest`, `argo`, `store`, `changes`, `export`, `auth`, `webhook`)
@@ -587,8 +587,8 @@ This ensures all errors and slow requests are captured while keeping storage cos
 
 `otelhttp` middleware automatically extracts `traceparent` / `tracestate` headers (W3C Trace Context) from incoming requests. This means:
 
-- External systems calling `POST /v1/events` can propagate their trace context into Evidra
-- The Evidra UI (fetch requests) can include trace context if instrumented with OTel JS SDK
+- External systems calling `POST /v1/events` can propagate their trace context into Evidra-GitOps
+- The Evidra-GitOps UI (fetch requests) can include trace context if instrumented with OTel JS SDK
 - Argo CD webhook calls don't currently send trace headers, but will get their own root spans
 
 ### Internal Propagation

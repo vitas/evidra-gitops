@@ -1,6 +1,6 @@
 # Customer Adoption Guide (v1)
 
-Evidra v1 is Argo CD-first.
+Evidra-GitOps v1 is Argo CD-first.
 
 Primary integration surface:
 - Argo CD read-only API and application history
@@ -35,7 +35,7 @@ Practical boundary:
 - Do not use workload-level annotations (`Deployment`, `Pod`) as primary evidence linkage.
 
 Suggested bootstrap pattern for customer repos:
-- Add a small contract file (example: `.evidra/change-context.yaml`) containing change/ticket/approval reference values.
+- Add a small contract file (example: `.evidra-gitops/change-context.yaml`) containing change/ticket/approval reference values.
 - Render that contract into Argo `Application` annotations during manifest generation.
 
 ### Helm snippet

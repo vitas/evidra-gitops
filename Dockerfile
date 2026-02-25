@@ -10,16 +10,16 @@ COPY internal ./internal
 COPY db ./db
 
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/evidra ./cmd/evidra
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/evidra-gitops ./cmd/evidra-gitops
 
 FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
 
-COPY --from=build /out/evidra /app/evidra
+COPY --from=build /out/evidra-gitops /app/evidra-gitops
 COPY --from=build /src/db /app/db
 
 ENV EVIDRA_ADDR=:8080
-ENV EVIDRA_EXPORT_DIR=/var/evidra/exports
+ENV EVIDRA_EXPORT_DIR=/var/evidra-gitops/exports
 
 EXPOSE 8080
-ENTRYPOINT ["/app/evidra"]
+ENTRYPOINT ["/app/evidra-gitops"]

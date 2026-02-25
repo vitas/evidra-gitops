@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CLUSTER_NAME="${KIND_CLUSTER_NAME:-evidra}"
+CLUSTER_NAME="${KIND_CLUSTER_NAME:-evidra-gitops}"
 ARGOCD_NS="${ARGOCD_NAMESPACE:-argocd}"
 ARGOCD_VERSION="${ARGOCD_VERSION:-v3.3.0}"
 ARGOCD_INSTALL_URL="${ARGOCD_INSTALL_URL:-https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml}"
@@ -60,26 +60,26 @@ check_evidra_api() {
   local base_url="${EVIDRA_EXTENSION_API_BASE_URL:-${EVIDRA_EXTENSION_BASE_URL:-http://localhost:8080}}"
   local code=""
 
-  code="$(curl -sS -o /tmp/evidra_kind_healthz.json -w "%{http_code}" --max-time 3 "${base_url}/healthz" 2>/dev/null || true)"
+  code="$(curl -sS -o /tmp/evidra_gitops_kind_healthz.json -w "%{http_code}" --max-time 3 "${base_url}/healthz" 2>/dev/null || true)"
   if [[ "${code}" != "200" ]]; then
-    echo "WARN: Evidra API is not reachable at ${base_url} (healthz status=${code:-n/a})."
+    echo "WARN: Evidra-GitOps API is not reachable at ${base_url} (healthz status=${code:-n/a})."
     echo "      Start the sandbox first:"
     echo "      make evidra-demo"
     return 0
   fi
 
-  code="$(curl -sS -o /tmp/evidra_kind_subjects.json -w "%{http_code}" --max-time 3 "${base_url}/v1/subjects" 2>/dev/null || true)"
+  code="$(curl -sS -o /tmp/evidra_gitops_kind_subjects.json -w "%{http_code}" --max-time 3 "${base_url}/v1/subjects" 2>/dev/null || true)"
   case "${code}" in
     200)
-      pass "Evidra API preflight passed at ${base_url}"
+      pass "Evidra-GitOps API preflight passed at ${base_url}"
       ;;
     401|403)
-      echo "WARN: Evidra API at ${base_url} requires auth (status=${code})."
+      echo "WARN: Evidra-GitOps API at ${base_url} requires auth (status=${code})."
       echo "      Configure extension auth if needed:"
       echo "      EVIDRA_EXTENSION_AUTH_MODE=bearer EVIDRA_EXTENSION_AUTH_TOKEN=<token> make evidra-ui-refresh"
       ;;
     *)
-      echo "WARN: Evidra API preflight returned unexpected status at ${base_url}/v1/subjects (status=${code:-n/a})."
+      echo "WARN: Evidra-GitOps API preflight returned unexpected status at ${base_url}/v1/subjects (status=${code:-n/a})."
       ;;
   esac
 }
@@ -122,7 +122,7 @@ rollout_or_debug statefulset argocd-application-controller 420s
 pass "argocd core workloads ready"
 
 ARGOCD_NAMESPACE="${ARGOCD_NS}" bash "${ROOT_DIR}/scripts/install-argocd-extension.sh" >/dev/null
-pass "argocd-server patched with evidra extension"
+pass "argocd-server patched with evidra-gitops extension"
 check_evidra_api
 
 echo "Run this command to open Argo CD UI locally:"

@@ -22,21 +22,21 @@ require_cmd() {
 
 require_cmd curl
 
-curl -fsS "${BASE_URL}/healthz" >/tmp/evidra_mvp_health.json || fail "health endpoint"
+curl -fsS "${BASE_URL}/healthz" >/tmp/evidra_gitops_mvp_health.json || fail "health endpoint"
 pass "health endpoint"
 
 curl -fsS -X POST "${BASE_URL}/v1/events" \
   -H "Content-Type: application/json" \
-  --data-binary @testdata/events/argocd_event_valid.json >/tmp/evidra_mvp_argo_valid.json || fail "argo event ingest"
+  --data-binary @testdata/events/argocd_event_valid.json >/tmp/evidra_gitops_mvp_argo_valid.json || fail "argo event ingest"
 pass "argo event ingest"
 
 curl -fsS -X POST "${BASE_URL}/v1/events" \
   -H "Content-Type: application/json" \
-  --data-binary @testdata/events/argocd_event_degraded_supporting.json >/tmp/evidra_mvp_argo_degraded.json || fail "supporting event ingest"
+  --data-binary @testdata/events/argocd_event_degraded_supporting.json >/tmp/evidra_gitops_mvp_argo_degraded.json || fail "supporting event ingest"
 pass "supporting event ingest"
 
-curl -fsS "${BASE_URL}/v1/changes?subject=${SUBJECT}&from=${FROM_TS}&to=${TO_TS}" >/tmp/evidra_mvp_changes.json || fail "changes query"
-grep -q "\"items\"" /tmp/evidra_mvp_changes.json || fail "changes response shape"
+curl -fsS "${BASE_URL}/v1/changes?subject=${SUBJECT}&from=${FROM_TS}&to=${TO_TS}" >/tmp/evidra_gitops_mvp_changes.json || fail "changes query"
+grep -q "\"items\"" /tmp/evidra_gitops_mvp_changes.json || fail "changes response shape"
 pass "changes query"
 
 echo "MVP local check completed"

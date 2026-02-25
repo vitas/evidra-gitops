@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UI_DIR="${ROOT_DIR}/ui"
-OUT_DIR="${ROOT_DIR}/tmp/argocd/extensions/evidra"
+OUT_DIR="${ROOT_DIR}/tmp/argocd/extensions/evidra-gitops"
 
 command -v npm >/dev/null 2>&1 || {
   echo "npm is required to build the Argo CD extension bundle." >&2
@@ -31,15 +31,15 @@ mkdir -p "${OUT_DIR}"
   npm run build:argocd-extension >/dev/null
 )
 
-cp "${UI_DIR}/dist-argocd-extension/evidra-argocd-extension.js" "${OUT_DIR}/extension-evidra.js"
-hash_file "${OUT_DIR}/extension-evidra.js" > "${OUT_DIR}/extension-evidra.sha256"
+cp "${UI_DIR}/dist-argocd-extension/evidra-gitops-argocd-extension.js" "${OUT_DIR}/extension-evidra-gitops.js"
+hash_file "${OUT_DIR}/extension-evidra-gitops.js" > "${OUT_DIR}/extension-evidra-gitops.sha256"
 
-cat > "${OUT_DIR}/extension-evidra.js.map.note.txt" <<'EOF'
+cat > "${OUT_DIR}/extension-evidra-gitops.js.map.note.txt" <<'EOF'
 This extension bundle is generated from ui/src/argocd-extension.js.
 Rebuild with: npm --prefix ui run build:argocd-extension
 EOF
 
 echo "Prepared Argo CD extension bundle at:"
-echo "  ${OUT_DIR}/extension-evidra.js"
+echo "  ${OUT_DIR}/extension-evidra-gitops.js"
 echo "Bundle checksum (sha256):"
-echo "  $(cat "${OUT_DIR}/extension-evidra.sha256")"
+echo "  $(cat "${OUT_DIR}/extension-evidra-gitops.sha256")"

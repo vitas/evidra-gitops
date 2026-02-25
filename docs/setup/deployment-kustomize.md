@@ -12,7 +12,7 @@
 
 ## Secret workflow
 
-All sensitive runtime values are generated into `Secret/evidra-secrets` from:
+All sensitive runtime values are generated into `Secret/evidra-gitops-secrets` from:
 
 - `deploy/k8s/overlays/<overlay>/secrets.env` (local, not committed)
 - template: `deploy/k8s/overlays/<overlay>/secrets.env.example`
@@ -45,24 +45,24 @@ make trial-apply
 # Manual path:
 kubectl apply -k deploy/k8s/addons/postgres
 kubectl apply -k deploy/k8s/overlays/trial
-kubectl -n evidra get pods
-kubectl -n evidra logs deploy/evidra-trial
+kubectl -n evidra-gitops get pods
+kubectl -n evidra-gitops logs deploy/evidra-gitops-trial
 ```
 
 ## Prod install
 
 ```bash
 kubectl apply -k deploy/k8s/overlays/prod
-kubectl -n evidra get pods
-kubectl -n evidra logs deploy/evidra-prod
+kubectl -n evidra-gitops get pods
+kubectl -n evidra-gitops logs deploy/evidra-gitops-prod
 ```
 
 ## OpenShift install
 
 ```bash
 oc apply -k deploy/k8s/overlays/openshift
-oc -n evidra get pods
-oc -n evidra get route
+oc -n evidra-gitops get pods
+oc -n evidra-gitops get route
 ```
 
 ## Argo CD Applications

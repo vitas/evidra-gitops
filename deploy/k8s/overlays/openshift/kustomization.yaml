@@ -12,7 +12,7 @@ labels:
       app.kubernetes.io/environment: openshift
 
 secretGenerator:
-  - name: evidra-secrets
+  - name: evidra-gitops-secrets
     envs:
       - secrets.env
 
@@ -22,7 +22,7 @@ generatorOptions:
 patches:
   - target:
       kind: Deployment
-      name: evidra
+      name: evidra-gitops
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -43,7 +43,7 @@ patches:
               - ALL
   - target:
       kind: ConfigMap
-      name: evidra-config
+      name: evidra-gitops-config
     patch: |-
       - op: replace
         path: /data/EVIDRA_ARGO_COLLECTOR_ENABLED
@@ -53,6 +53,6 @@ patches:
         value: "openshift"
 
 images:
-  - name: evidra
-    newName: image-registry.openshift-image-registry.svc:5000/evidra/evidra
+  - name: evidra-gitops
+    newName: image-registry.openshift-image-registry.svc:5000/evidra-gitops/evidra-gitops
     newTag: latest

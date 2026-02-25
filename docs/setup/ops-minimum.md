@@ -1,35 +1,35 @@
 # Ops Minimum (Argo CD Evaluation)
 
-This page defines the minimum operational setup for evaluating Evidra safely in a real Argo CD environment.
+This page defines the minimum operational setup for evaluating Evidra-GitOps safely in a real Argo CD environment.
 
 ## 1) Minimal permissions (read-only)
 
-Evidra collects Argo CD application state using a **Kubernetes dynamic informer** as the primary path. The Argo CD API is used as a fallback when no Kubernetes credentials are available.
+Evidra-GitOps collects Argo CD application state using a **Kubernetes dynamic informer** as the primary path. The Argo CD API is used as a fallback when no Kubernetes credentials are available.
 
 ### Kubernetes RBAC (primary path — in-cluster or kubeconfig)
 
-Evidra requires read access to `argoproj.io/v1alpha1/applications` in the namespace where Argo CD Applications live (typically `argocd`).
+Evidra-GitOps requires read access to `argoproj.io/v1alpha1/applications` in the namespace where Argo CD Applications live (typically `argocd`).
 
 Minimal ClusterRole example:
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: evidra-argo-reader
+  name: evidra-gitops-argo-reader
 rules:
 - apiGroups: ["argoproj.io"]
   resources: ["applications"]
   verbs: ["get", "list", "watch"]
 ```
 
-Bind this role to the Evidra service account with a ClusterRoleBinding (or namespaced RoleBinding if scoped to one namespace).
+Bind this role to the Evidra-GitOps service account with a ClusterRoleBinding (or namespaced RoleBinding if scoped to one namespace).
 
 ### Argo CD API token (fallback path)
 
 The Argo CD API URL is still required by configuration (`EVIDRA_ARGO_API_URL`), even when running in-cluster. The API token is used only for the polling fallback path (when Kubernetes config is unavailable).
 
 Recommended approach:
-1. Create a dedicated Argo CD account for Evidra (read-only).
+1. Create a dedicated Argo CD account for Evidra-GitOps (read-only).
 2. Bind that account to a read-only Argo CD role.
 3. Issue an API token for that account.
 4. Store the token in Kubernetes Secret as `EVIDRA_ARGO_API_TOKEN`.
@@ -38,9 +38,9 @@ Example Argo CD RBAC policy (for the API token fallback path):
 
 ```csv
 # policy.csv (example)
-p, role:evidra-read, applications, get, */*, allow
-p, role:evidra-read, projects, get, *, allow
-g, evidra, role:evidra-read
+p, role:evidra-gitops-read, applications, get, */*, allow
+p, role:evidra-gitops-read, projects, get, *, allow
+g, evidra-gitops, role:evidra-gitops-read
 ```
 
 Notes:
@@ -50,9 +50,9 @@ Notes:
 ## 2) Token rotation
 
 Operational rotation flow:
-1. Generate a new Argo CD token for the Evidra account.
-2. Update `EVIDRA_ARGO_API_TOKEN` in `Secret/evidra-secrets`.
-3. Restart Evidra deployment (`kubectl rollout restart`).
+1. Generate a new Argo CD token for the Evidra-GitOps account.
+2. Update `EVIDRA_ARGO_API_TOKEN` in `Secret/evidra-gitops-secrets`.
+3. Restart Evidra-GitOps deployment (`kubectl rollout restart`).
 4. Verify collector recovery in logs and API behavior.
 
 Expected symptoms when token is invalid/expired:
@@ -76,7 +76,7 @@ Key Argo ingest controls:
 
 Primary path (Kubernetes dynamic informer) load notes:
 - The informer subscribes to Application watch events from the Kubernetes API server. Load is event-driven, not periodic.
-- Ensure the Evidra service account has the minimal RBAC described in section 1.
+- Ensure the Evidra-GitOps service account has the minimal RBAC described in section 1.
 
 Fallback path (polling) load notes:
 - Only used when no Kubernetes credentials are available.
@@ -111,7 +111,7 @@ curl -fsS http://localhost:8080/healthz
 curl -fsS http://localhost:8080/metrics | head
 
 # collector logs in Kubernetes
-kubectl -n evidra logs deploy/evidra-prod | rg -n "argo collector|fetch error|backoff exhausted"
+kubectl -n evidra-gitops logs deploy/evidra-gitops-prod | rg -n "argo collector|fetch error|backoff exhausted"
 ```
 
 How to confirm recent ingest:
@@ -126,7 +126,7 @@ Current behavior note:
 
 ### 401/403 from Argo API
 - Verify `EVIDRA_ARGO_API_TOKEN`.
-- Verify Argo RBAC role bindings for the Evidra account.
+- Verify Argo RBAC role bindings for the Evidra-GitOps account.
 - Rotate token and restart deployment.
 
 ### Wrong Argo API URL

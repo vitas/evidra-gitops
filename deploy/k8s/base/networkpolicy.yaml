@@ -1,13 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: evidra
+  name: evidra-gitops
   labels:
-    app.kubernetes.io/name: evidra
+    app.kubernetes.io/name: evidra-gitops
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: evidra
+      app.kubernetes.io/name: evidra-gitops
   policyTypes:
     - Ingress
     - Egress

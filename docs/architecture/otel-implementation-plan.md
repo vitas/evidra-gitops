@@ -9,7 +9,7 @@ Read the [design document](otel-integration.md) first for rationale and metric d
 
 ```bash
 # Verify you can build and test before starting
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 make boundary-check
 ```
@@ -349,7 +349,7 @@ repo, cleanup := buildRepository(ctx, cfg, logger)
 **Verify:**
 ```bash
 go build ./internal/bootstrap/...
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 ```
 
 ---
@@ -392,7 +392,7 @@ rt := bootstrap.NewRuntime(ctx, cfg, logger, telemetry)
 
 **Verify:**
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 ```
 
@@ -487,7 +487,7 @@ go mod tidy
 
 **Verify:**
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 make boundary-check
 ```
@@ -563,7 +563,7 @@ make boundary-check
 Run the full suite:
 
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 make boundary-check
 ```
@@ -572,7 +572,7 @@ make boundary-check
 
 ```bash
 # Start with defaults (traces=none, metrics=prometheus)
-EVIDRA_DEV_INSECURE=true ./evidra &
+EVIDRA_DEV_INSECURE=true ./evidra-gitops &
 
 # Verify /metrics returns OTel-format metrics
 curl -s http://localhost:8080/metrics | grep http_server
@@ -589,7 +589,7 @@ kill %1
 
 **With stdout trace exporter (dev mode):**
 ```bash
-EVIDRA_DEV_INSECURE=true EVIDRA_OTEL_TRACES_EXPORTER=stdout ./evidra &
+EVIDRA_DEV_INSECURE=true EVIDRA_OTEL_TRACES_EXPORTER=stdout ./evidra-gitops &
 curl http://localhost:8080/healthz
 # Should see trace JSON output on stdout
 kill %1
@@ -1011,14 +1011,14 @@ go test ./internal/ingest/...
 ### Step 2.5: Phase 2 integration test
 
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 make boundary-check
 ```
 
 **Manual smoke test:**
 ```bash
-EVIDRA_DEV_INSECURE=true EVIDRA_OTEL_TRACES_EXPORTER=stdout ./evidra &
+EVIDRA_DEV_INSECURE=true EVIDRA_OTEL_TRACES_EXPORTER=stdout ./evidra-gitops &
 
 # Ingest an event — should see trace spans on stdout
 curl -X POST http://localhost:8080/v1/events \
@@ -1283,7 +1283,7 @@ Add `"runtime"` to imports.
 
 **Verify:**
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 ```
 
 ---
@@ -1291,14 +1291,14 @@ go build -o evidra ./cmd/evidra
 ### Step 3.6: Phase 3 integration test
 
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 make boundary-check
 ```
 
 **Full smoke test with all metrics:**
 ```bash
-EVIDRA_DEV_INSECURE=true EVIDRA_OTEL_TRACES_EXPORTER=stdout ./evidra &
+EVIDRA_DEV_INSECURE=true EVIDRA_OTEL_TRACES_EXPORTER=stdout ./evidra-gitops &
 
 # Ingest
 curl -X POST http://localhost:8080/v1/events \
@@ -1341,7 +1341,7 @@ After Phases 1–3, the old Prometheus code should already be deleted. This step
 **Run these checks:**
 
 ```bash
-# 1. No direct Prometheus imports anywhere in Evidra source
+# 1. No direct Prometheus imports anywhere in Evidra-GitOps source
 grep -r "promauto\|promhttp\|\"github.com/prometheus/client_golang" internal/ cmd/
 # Expected: no output
 
@@ -1379,7 +1379,7 @@ grep "prometheus/client_golang" go.mod
 
 **Verify:**
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 make boundary-check
 ```
@@ -1439,7 +1439,7 @@ OTel SDK initialization in `otel.go`, custom metric definitions in `metrics.go`.
 
 HTTP instrumentation uses `otelhttp.NewHandler()` from `go.opentelemetry.io/contrib`. DB instrumentation uses `otelsql.Open()`. Both produce automatic spans and metrics following OTel semantic conventions.
 
-Custom Evidra metrics (defined in `metrics.go`) use the OTel Metrics API — only API packages are imported, never SDK packages. SDK initialization is confined to `internal/observability/` and `internal/bootstrap/`.
+Custom Evidra-GitOps metrics (defined in `metrics.go`) use the OTel Metrics API — only API packages are imported, never SDK packages. SDK initialization is confined to `internal/observability/` and `internal/bootstrap/`.
 
 Boundary test `internal/architecture/boundaries_test.go` enforces that `internal/store`, `internal/app`, `internal/api`, `internal/ingest`, and `internal/export` never import OTel SDK packages.
 ```
@@ -1486,7 +1486,7 @@ curl -fsS http://localhost:8080/healthz
 curl -fsS http://localhost:8080/metrics | head
 
 # collector logs in Kubernetes
-kubectl -n evidra logs deploy/evidra-prod | rg -n "argo collector|fetch error|backoff exhausted"
+kubectl -n evidra-gitops logs deploy/evidra-gitops-prod | rg -n "argo collector|fetch error|backoff exhausted"
 ```
 
 How to confirm recent ingest:
@@ -1521,7 +1521,7 @@ After:
 
 ### Distributed tracing
 
-When `EVIDRA_OTEL_TRACES_EXPORTER=otlp` is set, Evidra exports OpenTelemetry traces to the configured endpoint. Traces cover the full request lifecycle: HTTP → auth → service → DB, plus Argo collector poll cycles.
+When `EVIDRA_OTEL_TRACES_EXPORTER=otlp` is set, Evidra-GitOps exports OpenTelemetry traces to the configured endpoint. Traces cover the full request lifecycle: HTTP → auth → service → DB, plus Argo collector poll cycles.
 
 ### Key log lines
 
@@ -1543,7 +1543,7 @@ curl -fsS http://localhost:8080/metrics | grep evidra_ingest_events_total
 curl -fsS http://localhost:8080/metrics | grep evidra_argo_polls_total
 
 # collector logs in Kubernetes
-kubectl -n evidra logs deploy/evidra-prod | rg -n "argo collector|poll error|normalize error"
+kubectl -n evidra-gitops logs deploy/evidra-gitops-prod | rg -n "argo collector|poll error|normalize error"
 ```
 
 ### How to confirm recent ingest
@@ -1588,10 +1588,10 @@ Add OTel default configuration entries:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: evidra-config
+  name: evidra-gitops-config
 data:
   EVIDRA_ADDR: ":8080"
-  EVIDRA_EXPORT_DIR: "/var/evidra/exports"
+  EVIDRA_EXPORT_DIR: "/var/evidra-gitops/exports"
   EVIDRA_DB_DRIVER: "pgx"
   EVIDRA_DB_DIALECT: "postgres"
   EVIDRA_DB_MIGRATE: "true"
@@ -1599,7 +1599,7 @@ data:
   EVIDRA_ARGO_COLLECTOR_INTERVAL: "30s"
   EVIDRA_ARGO_API_URL: ""
   EVIDRA_ARGO_DEFAULT_ENV: "unknown"
-  EVIDRA_ARGO_CHECKPOINT_FILE: "/var/evidra/argo_checkpoint.json"
+  EVIDRA_ARGO_CHECKPOINT_FILE: "/var/evidra-gitops/argo_checkpoint.json"
   # --- OpenTelemetry ---
   EVIDRA_OTEL_SERVICE_NAME: "evidra"
   EVIDRA_OTEL_TRACES_EXPORTER: "none"
@@ -1613,7 +1613,7 @@ data:
 
 **File:** `deploy/k8s/base/networkpolicy.yaml`
 
-When using `EVIDRA_OTEL_TRACES_EXPORTER=otlp`, Evidra needs to reach the OTel Collector on port 4317 (gRPC) or 4318 (HTTP). Add an egress rule:
+When using `EVIDRA_OTEL_TRACES_EXPORTER=otlp`, Evidra-GitOps needs to reach the OTel Collector on port 4317 (gRPC) or 4318 (HTTP). Add an egress rule:
 
 ```yaml
     # OTel Collector (OTLP gRPC). Only needed when EVIDRA_OTEL_TRACES_EXPORTER=otlp.
@@ -1631,7 +1631,7 @@ Add this after the existing Postgres egress rule (after line 35).
 
 **File:** `docker-compose.yml`
 
-Add OTel defaults to the `evidra` service environment section (after line 35):
+Add OTel defaults to the `evidra-gitops` service environment section (after line 35):
 
 ```yaml
       EVIDRA_OTEL_SERVICE_NAME: "evidra"
@@ -1680,7 +1680,7 @@ This removes any entries from `go.sum` for packages no longer referenced (direct
 
 **Verify:**
 ```bash
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 go test ./...
 ```
 
@@ -1692,7 +1692,7 @@ Run the complete checklist:
 
 ```bash
 # Build
-go build -o evidra ./cmd/evidra
+go build -o evidra-gitops ./cmd/evidra-gitops
 
 # Tests
 go test ./...
@@ -1723,7 +1723,7 @@ grep -c "EVIDRA_OTEL" docker-compose.yml
 # Expected: >= 2
 
 # Metrics smoke (requires running server)
-EVIDRA_DEV_INSECURE=true ./evidra &
+EVIDRA_DEV_INSECURE=true ./evidra-gitops &
 sleep 2
 make metrics-check
 kill %1
@@ -1737,11 +1737,11 @@ After all four phases are complete, verify:
 
 ### Code
 
-- [ ] `go build -o evidra ./cmd/evidra` — succeeds
+- [ ] `go build -o evidra-gitops ./cmd/evidra-gitops` — succeeds
 - [ ] `go test ./...` — all tests pass
 - [ ] `make boundary-check` — no violations
 - [ ] `go vet ./...` — no issues
-- [ ] `grep -r "promauto\|promhttp\|prometheus/client_golang" internal/` — no direct Prometheus imports in Evidra code
+- [ ] `grep -r "promauto\|promhttp\|prometheus/client_golang" internal/` — no direct Prometheus imports in Evidra-GitOps code
 - [ ] `grep -r "\"log\"" internal/` — no stdlib `log` package imported in `internal/` (only in cmd/ before logger init)
 - [ ] `internal/observability/httpmetrics.go` does not exist
 - [ ] No file in `internal/store`, `internal/app`, `internal/api`, `internal/ingest`, or `internal/export` imports `go.opentelemetry.io/otel/sdk` (only API packages)

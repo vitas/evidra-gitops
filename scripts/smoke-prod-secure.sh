@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-NS="${EVIDRA_NAMESPACE:-evidra}"
-EVIDRA_DEPLOY="${EVIDRA_DEPLOYMENT:-evidra-prod-secure}"
+NS="${EVIDRA_NAMESPACE:-evidra-gitops}"
+EVIDRA_DEPLOY="${EVIDRA_DEPLOYMENT:-evidra-gitops-prod-secure}"
 PROXY_DEPLOY="${EVIDRA_PROXY_DEPLOYMENT:-oauth2-proxy-prod-secure}"
-EVIDRA_SVC="${EVIDRA_SERVICE:-evidra-prod-secure}"
+EVIDRA_SVC="${EVIDRA_SERVICE:-evidra-gitops-prod-secure}"
 LOCAL_PORT="${EVIDRA_LOCAL_PORT:-18080}"
 BASE_URL="http://127.0.0.1:${LOCAL_PORT}"
 
@@ -12,25 +12,25 @@ pass() { echo "PASS: $1"; }
 fail() { echo "FAIL: $1"; exit 1; }
 
 kubectl -n "${NS}" rollout status "deployment/${EVIDRA_DEPLOY}" --timeout=180s || fail "evidra deployment rollout"
-pass "evidra deployment rollout"
+pass "evidra-gitops deployment rollout"
 
 kubectl -n "${NS}" rollout status "deployment/${PROXY_DEPLOY}" --timeout=180s || fail "oauth2-proxy deployment rollout"
 pass "oauth2-proxy deployment rollout"
 
-kubectl -n "${NS}" port-forward "svc/${EVIDRA_SVC}" "${LOCAL_PORT}:80" >/tmp/evidra_prod_secure_pf.log 2>&1 &
+kubectl -n "${NS}" port-forward "svc/${EVIDRA_SVC}" "${LOCAL_PORT}:80" >/tmp/evidra_gitops_prod_secure_pf.log 2>&1 &
 PF_PID=$!
 trap 'kill ${PF_PID} >/dev/null 2>&1 || true' EXIT
 sleep 2
 
-code=$(curl -s -o /tmp/evidra_ps_unauth.json -w "%{http_code}" "${BASE_URL}/v1/subjects")
+code=$(curl -s -o /tmp/evidra_gitops_ps_unauth.json -w "%{http_code}" "${BASE_URL}/v1/subjects")
 [[ "${code}" == "401" ]] || fail "unauthorized read without role header"
 pass "unauthorized read without role header"
 
-code=$(curl -s -o /tmp/evidra_ps_reader.json -w "%{http_code}" -H "X-Forwarded-Groups: reader" "${BASE_URL}/v1/subjects")
+code=$(curl -s -o /tmp/evidra_gitops_ps_reader.json -w "%{http_code}" -H "X-Forwarded-Groups: reader" "${BASE_URL}/v1/subjects")
 [[ "${code}" == "200" ]] || fail "reader role can read subjects"
 pass "reader role can read subjects"
 
-code=$(curl -s -o /tmp/evidra_ps_export_reader.json -w "%{http_code}" -X POST \
+code=$(curl -s -o /tmp/evidra_gitops_ps_export_reader.json -w "%{http_code}" -X POST \
   -H "Content-Type: application/json" \
   -H "X-Forwarded-Groups: reader" \
   "${BASE_URL}/v1/exports" \
@@ -38,7 +38,7 @@ code=$(curl -s -o /tmp/evidra_ps_export_reader.json -w "%{http_code}" -X POST \
 [[ "${code}" == "401" ]] || fail "reader role cannot create export"
 pass "reader role cannot create export"
 
-code=$(curl -s -o /tmp/evidra_ps_export_exporter.json -w "%{http_code}" -X POST \
+code=$(curl -s -o /tmp/evidra_gitops_ps_export_exporter.json -w "%{http_code}" -X POST \
   -H "Content-Type: application/json" \
   -H "X-Forwarded-Groups: exporter" \
   "${BASE_URL}/v1/exports" \
@@ -60,7 +60,7 @@ read -r -d '' EVENT_PAYLOAD <<'JSON' || true
 }
 JSON
 
-code=$(curl -s -o /tmp/evidra_ps_ingest_reader.json -w "%{http_code}" -X POST \
+code=$(curl -s -o /tmp/evidra_gitops_ps_ingest_reader.json -w "%{http_code}" -X POST \
   -H "Content-Type: application/json" \
   -H "X-Forwarded-Groups: reader" \
   "${BASE_URL}/v1/events" \
@@ -68,7 +68,7 @@ code=$(curl -s -o /tmp/evidra_ps_ingest_reader.json -w "%{http_code}" -X POST \
 [[ "${code}" == "401" ]] || fail "reader role cannot ingest"
 pass "reader role cannot ingest"
 
-code=$(curl -s -o /tmp/evidra_ps_ingest_admin.json -w "%{http_code}" -X POST \
+code=$(curl -s -o /tmp/evidra_gitops_ps_ingest_admin.json -w "%{http_code}" -X POST \
   -H "Content-Type: application/json" \
   -H "X-Forwarded-Groups: admin" \
   "${BASE_URL}/v1/events" \

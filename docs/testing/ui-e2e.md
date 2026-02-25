@@ -66,9 +66,9 @@ make evidra-ui-e2e-down
 - `ARGO_BASE_URL` (default: `https://localhost:8081`) — Argo CD base URL for login
 - `ARGO_USERNAME` (default: `admin`)
 - `ARGO_PASSWORD` (required for Argo CD login)
-- `EVIDRA_TAB_NAME` (default: `Evidra`) — name of the Evidra tab in the Argo CD extension
-- `EVIDRA_EXTENSION_PATH` (default: `/evidra-evidence`) — URL path for the Argo CD extension
-- `EVIDRA_STANDALONE_URL` (default: `http://localhost:8080/ui/`) — Evidra standalone UI URL; used automatically when Argo CD login fails
+- `EVIDRA_TAB_NAME` (default: `Evidra-GitOps`) — name of the Evidra-GitOps tab in the Argo CD extension
+- `EVIDRA_EXTENSION_PATH` (default: `/evidra-gitops-evidence`) — URL path for the Argo CD extension
+- `EVIDRA_STANDALONE_URL` (default: `http://localhost:8080/ui/`) — Evidra-GitOps standalone UI URL; used automatically when Argo CD login fails
 - `E2E_TIMEOUT_SECONDS` (default: `120`) — per-test timeout
 
 > **Standalone mode**: if Argo CD login fails, the test suite falls back to hitting `EVIDRA_STANDALONE_URL` directly. This allows running e2e tests against a plain `docker compose` stack without a Kind cluster.
