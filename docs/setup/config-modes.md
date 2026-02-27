@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Configuration Modes
 
 This page lists required environment variables and configuration properties for supported setup modes.

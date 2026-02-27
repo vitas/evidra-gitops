@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Evidence Explorer v1
 
 Evidence Explorer is a read-only investigation UI for Change case files.

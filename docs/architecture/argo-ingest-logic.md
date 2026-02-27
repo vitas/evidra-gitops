@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Argo Ingest Logic (v0.1)
 
 ## Overview

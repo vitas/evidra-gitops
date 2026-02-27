@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Argo Evidence Model (v1)
 
 This document defines what Argo CD evidence is required for incident investigation and deployment traceability in v1.

@@ -1,6 +1,8 @@
 # Evidra-GitOps
 
-**Investigation & evidence layer for Argo CD.**
+Argo CD deployment-change investigation and evidence tooling for GitOps environments.
+
+Evidra is an open-source tool developed and maintained by SameBits.
 
 Evidra-GitOps explains **what happened during a deployment** and produces
 **audit-ready evidence** from Argo CD history.
@@ -247,3 +249,7 @@ Start with:
 ## License
 
 Apache License 2.0
+
+---
+Part of the Evidra open-source toolset by SameBits.
+This name is used strictly for open-source identification purposes.

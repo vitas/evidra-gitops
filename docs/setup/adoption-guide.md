@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Customer Adoption Guide (v1)
 
 Evidra-GitOps v1 is Argo CD-first.

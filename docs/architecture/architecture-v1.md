@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Architecture v1
 
 Evidra-GitOps v1 is an Argo CD-first investigation and evidence layer. It derives lifecycle evidence from Argo CD operation history, revision metadata, and sync/health transitions, stores immutable records, and serves timeline/export APIs. The unified data model leverages the CNCF CloudEvents framework native integration.

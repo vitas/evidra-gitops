@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Ops Minimum (Argo CD Evaluation)
 
 This page defines the minimum operational setup for evaluating Evidra-GitOps safely in a real Argo CD environment.

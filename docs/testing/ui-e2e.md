@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # UI E2E Testing (Playwright)
 
 This suite validates the investigation flow in the Argo CD extension:

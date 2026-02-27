@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Incident Walkthrough: Degraded after Deploy (v0.1)
 
 This walkthrough demonstrates how to investigate a production degradation after a deployment using Evidra-GitOps v0.1.

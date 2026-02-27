@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # API and Change Contracts v1
 
 ## Change identity

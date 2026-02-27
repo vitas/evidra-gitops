@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # OpenTelemetry Integration — Implementation Plan
 
 **Ready-to-go instructions for developers.**

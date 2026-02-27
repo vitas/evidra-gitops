@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # System Design: OpenTelemetry Integration for Evidra-GitOps
 
 **Author:** System Architecture

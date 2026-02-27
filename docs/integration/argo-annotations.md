@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Argo Annotation Integration v1
 
 Use Argo Application annotations as the primary external traceability mechanism.

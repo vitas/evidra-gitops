@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Kubernetes Deployment (Kustomize)
 
 ## Layout

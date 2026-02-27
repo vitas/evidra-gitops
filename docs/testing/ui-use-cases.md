@@ -1,3 +1,5 @@
+Part of the Evidra OSS toolset by SameBits.
+
 # Evidence Explorer UI Use Cases (v0.1)
 
 This file maps investigation use cases to automated Playwright coverage.
