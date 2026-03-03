@@ -9,6 +9,7 @@ import (
 	"evidra/internal/model"
 	"evidra/internal/store"
 
+	expirable "github.com/hashicorp/golang-lru/v2/expirable"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -22,14 +23,16 @@ type Exporter interface {
 }
 
 type Service struct {
-	repo     store.Repository
-	exporter Exporter
+	repo        store.Repository
+	exporter    Exporter
+	changeCache *expirable.LRU[string, []ce.StoredEvent]
 }
 
 func NewService(repo store.Repository, exporter Exporter) *Service {
 	return &Service{
-		repo:     repo,
-		exporter: exporter,
+		repo:        repo,
+		exporter:    exporter,
+		changeCache: expirable.NewLRU[string, []ce.StoredEvent](256, nil, 10*time.Second),
 	}
 }
 
@@ -46,6 +49,8 @@ func (s *Service) IngestEvent(ctx context.Context, event ce.StoredEvent) (store.
 	status, t, err := s.repo.IngestEvent(ctx, event)
 	if err != nil {
 		span.RecordError(err)
+	} else {
+		s.changeCache.Purge()
 	}
 	return status, t, err
 }

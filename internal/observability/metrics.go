@@ -47,6 +47,8 @@ var (
 	ChangesProjectionDuration metric.Float64Histogram
 	ChangesEventCount         metric.Int64Histogram
 	ChangesCount              metric.Int64Histogram
+	ChangeCacheHits           metric.Int64Counter
+	ChangeCacheMisses         metric.Int64Counter
 )
 
 // Export metrics
@@ -125,6 +127,10 @@ func init() {
 		metric.WithUnit("s"))
 	ChangesEventCount, _ = meter.Int64Histogram("evidra.changes.event_count")
 	ChangesCount, _ = meter.Int64Histogram("evidra.changes.count")
+	ChangeCacheHits, _ = meter.Int64Counter("evidra.changes.cache_hits_total",
+		metric.WithDescription("Change query cache hits"))
+	ChangeCacheMisses, _ = meter.Int64Counter("evidra.changes.cache_misses_total",
+		metric.WithDescription("Change query cache misses"))
 
 	// Export
 	ExportJobsTotal, _ = meter.Int64Counter("evidra.export.jobs_total")

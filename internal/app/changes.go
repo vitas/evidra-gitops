@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"sort"
 	"strings"
 	"time"
@@ -222,6 +223,15 @@ func (s *Service) GetChangeEvidence(ctx context.Context, id string, q ChangeQuer
 	}, nil
 }
 
+func changeQueryCacheKey(q ChangeQuery) string {
+	raw := fmt.Sprintf("%s|%s|%s|%d|%d|%s",
+		q.Subject.App, q.Subject.Environment, q.Subject.Cluster,
+		q.From.UTC().UnixNano(), q.To.UTC().UnixNano(),
+		strings.TrimSpace(q.Q))
+	sum := sha256.Sum256([]byte(raw))
+	return hex.EncodeToString(sum[:])
+}
+
 func (s *Service) eventsForChangeQuery(ctx context.Context, q ChangeQuery) ([]ce.StoredEvent, error) {
 	ctx, span := tracer.Start(ctx, "Service.eventsForChangeQuery",
 		trace.WithAttributes(
@@ -229,6 +239,16 @@ func (s *Service) eventsForChangeQuery(ctx context.Context, q ChangeQuery) ([]ce
 		),
 	)
 	defer span.End()
+
+	key := changeQueryCacheKey(q)
+	if cached, ok := s.changeCache.Get(key); ok {
+		observability.ChangeCacheHits.Add(ctx, 1)
+		span.SetAttributes(attribute.Bool("cache_hit", true))
+		return cached, nil
+	}
+	observability.ChangeCacheMisses.Add(ctx, 1)
+	span.SetAttributes(attribute.Bool("cache_hit", false))
+
 	res, err := s.repo.QueryTimeline(ctx, store.TimelineQuery{
 		Subject:           q.Subject.App,
 		Namespace:         q.Subject.Environment,
@@ -245,6 +265,7 @@ func (s *Service) eventsForChangeQuery(ctx context.Context, q ChangeQuery) ([]ce
 	if strings.TrimSpace(q.Q) != "" {
 		events = filterEventsByQuery(events, q.Q)
 	}
+	s.changeCache.Add(key, events)
 	return events, nil
 }
 
