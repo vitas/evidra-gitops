@@ -44,8 +44,16 @@ func NewRuntime(ctx context.Context, cfg config.Config, logger logr.Logger, tele
 		logger.Info("kubernetes collector configuration ignored: out of scope in Argo CD-first v1")
 	}
 
+	trustedProxies, err := cfg.ParseTrustedProxies()
+	if err != nil {
+		logger.Error(err, "invalid trusted proxies configuration")
+		fmt.Fprintf(os.Stderr, "FATAL: invalid EVIDRA_TRUSTED_PROXIES: %v\n", err)
+		os.Exit(1)
+	}
+
 	exporter := export.NewFilesystemExporter(cfg.ExportDir)
 	server := api.NewServerWithOptions(repo, exporter, api.ServerOptions{
+		TrustedProxies: trustedProxies,
 		Auth: api.AuthConfig{
 			Read: api.BearerPolicy{
 				Token: cfg.Auth.Read.Token,

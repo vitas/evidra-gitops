@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -29,7 +28,7 @@ func newAuthRateLimiter(cfg RateLimitPolicy) *authRateLimiter {
 	}
 }
 
-func (l *authRateLimiter) Allow(r *http.Request, action string) bool {
+func (l *authRateLimiter) Allow(remoteIP string, action string) bool {
 	if l == nil || !l.enabled {
 		return true
 	}
@@ -38,7 +37,7 @@ func (l *authRateLimiter) Allow(r *http.Request, action string) bool {
 		return true
 	}
 	nowWindow := currentMinuteWindow()
-	key := strings.TrimSpace(action) + "|" + requestRemoteIP(r)
+	key := strings.TrimSpace(action) + "|" + remoteIP
 
 	l.mu.Lock()
 	defer l.mu.Unlock()

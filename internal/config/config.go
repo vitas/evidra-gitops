@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"strconv"
 	"strings"
@@ -12,9 +13,10 @@ import (
 )
 
 type Config struct {
-	Addr        string `mapstructure:"addr"`
-	ExportDir   string `mapstructure:"export_dir"`
-	DevInsecure bool   `mapstructure:"dev_insecure"`
+	Addr           string `mapstructure:"addr"`
+	ExportDir      string `mapstructure:"export_dir"`
+	DevInsecure    bool   `mapstructure:"dev_insecure"`
+	TrustedProxies string `mapstructure:"trusted_proxies"`
 
 	DBDriver   string `mapstructure:"db_driver"`
 	DBDSN      string `mapstructure:"db_dsn"`
@@ -491,6 +493,40 @@ func hasAllDBParts(c Config) bool {
 		strings.TrimSpace(c.DBName) != "" &&
 		strings.TrimSpace(c.DBUser) != "" &&
 		strings.TrimSpace(c.DBPassword) != ""
+}
+
+// ParseTrustedProxies parses the comma-separated CIDR list from TrustedProxies.
+// Single IPs without a mask are treated as /32 (IPv4) or /128 (IPv6).
+func (c Config) ParseTrustedProxies() ([]*net.IPNet, error) {
+	raw := strings.TrimSpace(c.TrustedProxies)
+	if raw == "" {
+		return nil, nil
+	}
+	parts := strings.Split(raw, ",")
+	nets := make([]*net.IPNet, 0, len(parts))
+	for _, p := range parts {
+		cidr := strings.TrimSpace(p)
+		if cidr == "" {
+			continue
+		}
+		if !strings.Contains(cidr, "/") {
+			ip := net.ParseIP(cidr)
+			if ip == nil {
+				return nil, fmt.Errorf("invalid trusted proxy IP: %q", cidr)
+			}
+			bits := 32
+			if ip.To4() == nil {
+				bits = 128
+			}
+			cidr = fmt.Sprintf("%s/%d", ip.String(), bits)
+		}
+		_, ipNet, err := net.ParseCIDR(cidr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid trusted proxy CIDR %q: %w", cidr, err)
+		}
+		nets = append(nets, ipNet)
+	}
+	return nets, nil
 }
 
 func buildDSNFromParts(c Config) string {

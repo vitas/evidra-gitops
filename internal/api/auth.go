@@ -9,7 +9,7 @@ import (
 var errRateLimited = errors.New("rate limited")
 
 func (s *Server) authorizeRead(r *http.Request) error {
-	if s.rateLimiter != nil && !s.rateLimiter.Allow(r, "read") {
+	if s.rateLimiter != nil && !s.rateLimiter.Allow(s.requestRemoteIP(r), "read") {
 		s.auditAuth(r, "deny", "rate_limit", "", nil, "read rate limit exceeded")
 		return errRateLimited
 	}
@@ -35,7 +35,7 @@ func (s *Server) authorizeReadToken(r *http.Request) error {
 }
 
 func (s *Server) authorizeIngest(r *http.Request, body []byte) error {
-	if s.rateLimiter != nil && !s.rateLimiter.Allow(r, "ingest") {
+	if s.rateLimiter != nil && !s.rateLimiter.Allow(s.requestRemoteIP(r), "ingest") {
 		s.auditAuth(r, "deny", "rate_limit", "", nil, "ingest rate limit exceeded")
 		return errRateLimited
 	}
@@ -63,7 +63,7 @@ func (s *Server) authorizeIngest(r *http.Request, body []byte) error {
 }
 
 func (s *Server) authorizeExport(r *http.Request) error {
-	if s.rateLimiter != nil && !s.rateLimiter.Allow(r, "export") {
+	if s.rateLimiter != nil && !s.rateLimiter.Allow(s.requestRemoteIP(r), "export") {
 		s.auditAuth(r, "deny", "rate_limit", "", nil, "export rate limit exceeded")
 		return errRateLimited
 	}

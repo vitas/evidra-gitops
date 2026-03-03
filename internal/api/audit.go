@@ -37,7 +37,7 @@ func (s *Server) auditAuth(r *http.Request, decision, mechanism, actor string, r
 		Roles:         roles,
 		Method:        r.Method,
 		Path:          r.URL.Path,
-		RemoteIP:      requestRemoteIP(r),
+		RemoteIP:      s.requestRemoteIP(r),
 		RequestID:     strings.TrimSpace(r.Header.Get("X-Request-Id")),
 		CorrelationID: strings.TrimSpace(r.Header.Get("X-Correlation-Id")),
 		Reason:        strings.TrimSpace(reason),
@@ -60,14 +60,30 @@ func (s *Server) auditAuth(r *http.Request, decision, mechanism, actor string, r
 	s.writeAuditLine(line)
 }
 
-func requestRemoteIP(r *http.Request) string {
-	xff := strings.TrimSpace(r.Header.Get("X-Forwarded-For"))
-	if xff != "" {
-		parts := strings.Split(xff, ",")
-		if len(parts) > 0 {
-			return strings.TrimSpace(parts[0])
+func (s *Server) requestRemoteIP(r *http.Request) string {
+	remoteIP := remoteAddrIP(r)
+	if len(s.trustedProxies) > 0 {
+		parsed := net.ParseIP(remoteIP)
+		if parsed != nil {
+			for _, cidr := range s.trustedProxies {
+				if cidr.Contains(parsed) {
+					xff := strings.TrimSpace(r.Header.Get("X-Forwarded-For"))
+					if xff != "" {
+						parts := strings.Split(xff, ",")
+						if len(parts) > 0 {
+							return strings.TrimSpace(parts[0])
+						}
+					}
+					break
+				}
+			}
 		}
 	}
+	return remoteIP
+}
+
+// remoteAddrIP extracts the IP from http.Request.RemoteAddr.
+func remoteAddrIP(r *http.Request) string {
 	host, _, err := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr))
 	if err == nil {
 		return host

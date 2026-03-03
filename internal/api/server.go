@@ -1,6 +1,7 @@
 package api
 
 import (
+	"net"
 	"sync"
 
 	"evidra/internal/app"
@@ -66,6 +67,7 @@ type RateLimitPolicy struct {
 
 type ServerOptions struct {
 	Auth            AuthConfig
+	TrustedProxies  []*net.IPNet
 	WebhookRegistry *ingest.Registry
 	ArgoOnlyMode    bool
 	Logger          logr.Logger
@@ -74,6 +76,7 @@ type ServerOptions struct {
 type Server struct {
 	service         *app.Service
 	auth            AuthConfig
+	trustedProxies  []*net.IPNet
 	webhookRegistry *ingest.Registry
 	argoOnlyMode    bool
 	rateLimiter     *authRateLimiter
@@ -96,6 +99,7 @@ func NewServerWithOptions(repo store.Repository, exporter Exporter, opts ServerO
 	return &Server{
 		service:         svc,
 		auth:            auth,
+		trustedProxies:  opts.TrustedProxies,
 		webhookRegistry: reg,
 		argoOnlyMode:    opts.ArgoOnlyMode,
 		rateLimiter:     newAuthRateLimiter(auth.Rate),
