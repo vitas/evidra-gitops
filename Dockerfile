@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.25-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS build
+ARG TARGETOS TARGETARCH
 WORKDIR /src
 
 COPY go.mod ./
@@ -10,7 +11,7 @@ COPY internal ./internal
 COPY db ./db
 
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/evidra-gitops ./cmd/evidra-gitops
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o /out/evidra-gitops ./cmd/evidra-gitops
 
 FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app

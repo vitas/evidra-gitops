@@ -1,5 +1,10 @@
 # Evidra-GitOps
 
+[![CI](https://github.com/vitas/evidra-gitops/actions/workflows/ci.yml/badge.svg)](https://github.com/vitas/evidra-gitops/actions/workflows/ci.yml)
+[![Release](https://github.com/vitas/evidra-gitops/actions/workflows/release.yml/badge.svg)](https://github.com/vitas/evidra-gitops/actions/workflows/release.yml)
+[![Go](https://img.shields.io/github/go-mod/go-version/vitas/evidra-gitops)](go.mod)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 Argo CD deployment-change investigation and evidence tooling for GitOps environments.
 
 Evidra is an open-source tool developed and maintained by SameBits.
