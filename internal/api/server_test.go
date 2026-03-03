@@ -123,14 +123,14 @@ func TestEndpointsFlow(t *testing.T) {
 		t.Fatalf("expected 200 for download, got %d", dRes.Code)
 	}
 	var exportArtifact struct {
-		ChangeID          string `json:"change_id"`
-		GeneratedAt       string `json:"generated_at"`
-		Source            string `json:"source"`
-		Application       string `json:"application"`
-		Cluster           string `json:"cluster"`
-		Namespace         string `json:"namespace"`
-		DeterministicHash string `json:"deterministic_hash_sha256"`
-		Timeline          []interface{} `json:"timeline"`
+		ChangeID              string        `json:"change_id"`
+		GeneratedAt           string        `json:"generated_at"`
+		Source                string        `json:"source"`
+		Application           string        `json:"application"`
+		Cluster               string        `json:"cluster"`
+		Namespace             string        `json:"namespace"`
+		DeterministicHash     string        `json:"deterministic_hash_sha256"`
+		Timeline              []interface{} `json:"timeline"`
 		PostDeployDegradation struct {
 			Observed bool `json:"observed"`
 		} `json:"post_deploy_degradation"`

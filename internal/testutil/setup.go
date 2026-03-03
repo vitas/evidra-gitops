@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	ce "evidra/internal/cloudevents"
 	"evidra/internal/api"
+	ce "evidra/internal/cloudevents"
 	"evidra/internal/export"
 	"evidra/internal/store"
 )

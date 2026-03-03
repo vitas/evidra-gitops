@@ -31,7 +31,7 @@ type Config struct {
 	Argo ArgoConfig       `mapstructure:"argo"`
 	K8s  KubernetesConfig `mapstructure:"k8s"`
 	TLS  TLSConfig        `mapstructure:"tls"`
-	OTel OTelConfig        `mapstructure:"otel"`
+	OTel OTelConfig       `mapstructure:"otel"`
 }
 
 type AuthConfig struct {
@@ -131,9 +131,9 @@ type OTelConfig struct {
 	ServiceName      string  `mapstructure:"service_name"`
 	ServiceVersion   string  `mapstructure:"service_version"`
 	Environment      string  `mapstructure:"environment"`
-	TracesExporter   string  `mapstructure:"traces_exporter"`   // otlp | stdout | none
-	MetricsExporter  string  `mapstructure:"metrics_exporter"`  // prometheus | otlp | stdout | none
-	LogsExporter     string  `mapstructure:"logs_exporter"`     // otlp | stdout | none
+	TracesExporter   string  `mapstructure:"traces_exporter"`  // otlp | stdout | none
+	MetricsExporter  string  `mapstructure:"metrics_exporter"` // prometheus | otlp | stdout | none
+	LogsExporter     string  `mapstructure:"logs_exporter"`    // otlp | stdout | none
 	ExporterEndpoint string  `mapstructure:"exporter_endpoint"`
 	ExporterProtocol string  `mapstructure:"exporter_protocol"` // grpc | http/protobuf
 	ExporterInsecure bool    `mapstructure:"exporter_insecure"`
@@ -442,16 +442,16 @@ func (c Config) Summary() StartupSummary {
 		mode = "sql:" + c.DBDialect
 	}
 	return StartupSummary{
-		RepositoryMode:     mode,
-		WebhookProviders:   []string{"argocd"},
-		ArgoCollector:      c.Argo.CollectorEnabled,
-		ArgoBackend:        c.Argo.Backend,
-		ArgoCheckpointFile: c.Argo.CheckpointFile,
-		K8sCollector:       false,
-		K8sNamespace:       c.K8s.Namespace,
-		OIDCEnabled:        c.Auth.OIDC.Enabled,
-		JWTEnabled:         c.Auth.JWT.Enabled,
-		TLSEnabled:         c.TLS.Enabled,
+		RepositoryMode:      mode,
+		WebhookProviders:    []string{"argocd"},
+		ArgoCollector:       c.Argo.CollectorEnabled,
+		ArgoBackend:         c.Argo.Backend,
+		ArgoCheckpointFile:  c.Argo.CheckpointFile,
+		K8sCollector:        false,
+		K8sNamespace:        c.K8s.Namespace,
+		OIDCEnabled:         c.Auth.OIDC.Enabled,
+		JWTEnabled:          c.Auth.JWT.Enabled,
+		TLSEnabled:          c.TLS.Enabled,
 		AuthRateLimit:       c.Auth.RateLimit.Enabled,
 		DevInsecure:         c.DevInsecure,
 		OTelTracesExporter:  c.OTel.TracesExporter,

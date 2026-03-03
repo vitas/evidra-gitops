@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	ce "evidra/internal/cloudevents"
 	"evidra/internal/api"
+	ce "evidra/internal/cloudevents"
 	"evidra/internal/config"
 	"evidra/internal/export"
 	"evidra/internal/ingest"
@@ -21,8 +21,8 @@ import (
 
 	"github.com/XSAM/otelsql"
 	"github.com/go-logr/logr"
-	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
