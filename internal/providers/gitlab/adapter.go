@@ -1,6 +1,7 @@
 package gitlab
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"strings"
 
@@ -41,7 +42,8 @@ func (a Adapter) Authorize(headers ingest.HeaderReader, _ []byte) error {
 	if token == "" {
 		return nil
 	}
-	if strings.TrimSpace(headers.Get(nonEmpty(a.TokenHeader, defaultTokenHeader))) != token {
+	provided := strings.TrimSpace(headers.Get(nonEmpty(a.TokenHeader, defaultTokenHeader)))
+	if subtle.ConstantTimeCompare([]byte(provided), []byte(token)) != 1 {
 		return fmt.Errorf("invalid gitlab webhook token")
 	}
 	return nil
